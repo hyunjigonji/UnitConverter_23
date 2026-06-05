@@ -1,83 +1,174 @@
+# UnitConverter_23
 
-## Unit Converter (Python)
 ![unit-converter](./unit-converter.jpg)
-### Overview
-- 사용자가 입력한 길이(`단위:값`)를 기반으로, 해당 값을 다른 모든 단위로 변환해 출력하는 프로그램.
-- 새로운 단위를 추가할 때 기존 코드의 변경이 최소화되도록 설계한다.
-- 각 단위 변환 로직은 테스트 코드로 검증한다.
 
-### 가상환경 설정 및 실행
-```bash
-# 가상환경 생성
-python -m venv venv
+단위와 값을 한 줄로 입력하면, **같은 카테고리의 모든 지원 단위**로 변환 결과를 출력하는 CLI 프로그램입니다.
 
-# 가상환경 활성화 (Windows)
-venv\Scripts\activate
+**아키텍처:** ECB (Entity — Control — Boundary)  
+**개발 방식:** Dual-Track TDD (Logic `test_d_*` · UI `test_u_*`)
 
-# 가상환경 활성화 (macOS/Linux)
-source venv/bin/activate
+---
 
-# 실행
-python UnitConverter.py
+## 개요
 
-# 가상환경 비활성화
-deactivate
+| 항목 | 내용 |
+|------|------|
+| 입력 | `<unit>:<value>` (예: `meter:2.5`) |
+| 출력 | `<unit>:<converted_value>` — 한 줄에 한 단위 |
+| 오류 | E001~E007 코드 |
+| Base Unit | Length→meter · Weight→g · Temperature→celsius · Area→sqm · Volume→liter |
+
+**예시**
+
+입력:
+
+```
+meter:2.5
 ```
 
-### 기본 요구사항
-1. 사용자 입력 예시:
-   ```
-   meter:2.5
-   ```
-   → 출력:
-   ```
-   2.5 meter = 8.2 feet
-   2.5 meter = 2.7 yard
-   ...
-   ```
+출력 (Length 카테고리 전 단위):
 
-2. 현재 지원 단위:
-   - meter
-   - feet
-   - yard
+```
+mm:2500
+cm:250
+meter:2.5
+km:0.0025
+inch:98.4252
+feet:8.2021
+yard:2.734
+mile:0.001553
+```
 
-3. 새로운 단위가 추가될 때도 기존 코드의 변경이 최소화되도록 할 것.
+---
 
-4. 각 단위 간 변환이 정확히 계산되도록 테스트 코드를 작성할 것.
+## 지원 단위
 
-### 비즈니스 로직
-- `1 meter = 3.28084 feet`
-- `1 meter = 1.09361 yard`
-- feet/yard 간의 비율은 meter 기반으로 계산.
+| 카테고리 | 단위 |
+|----------|------|
+| Length | mm, cm, meter, km, inch, feet, yard, mile |
+| Weight | mg, g, kg, oz, lb |
+| Temperature | celsius, fahrenheit, kelvin |
+| Area | sqm, pyeong, acre, hectare |
+| Volume | ml, liter, gallon |
 
-### 품질 요구사항
-- OCP를 만족하는 설계
-- SRP를 만족하는 클래스 구성
-- 입력 값 검증 (음수, 잘못된 형식, 없는 단위)
+---
 
-### 추가 요구사항
-- **설정 외부화**
-   - 변환 비율을 외부 설정 파일(JSON/YAML)에서 로드
-- **동적으로 단위와 비율을 등록할 수 있도록 한다**
-   - 사용자 입력으로 `1 cubit = 0.4572 meter`를 등록하고 사용 가능
-- **출력 포맷 선택 기능** 
-   - JSON / CSV / 표 형태 출력
+## 프로젝트 구조
 
+```
+UnitConverter_23/
+├── docs/
+│   ├── PRD.md                 # 제품 요구사항
+│   └── ARCHITECTURE.md        # ECB·SOLID 설계
+├── src/                       # (GREEN 단계에서 구현 예정)
+│   └── unitconverter/
+│       ├── entity/
+│       ├── control/
+│       └── boundary/
+├── tests/
+│   ├── conftest.py
+│   └── entity/
+│       └── test_d_len_01.py   # D-LEN-01 RED
+├── reports/                   # 단계별 보고서
+├── prompts/                   # 세션 Transcript
+├── .cursor/
+│   ├── rules/                 # 개발 규칙 (SSOT)
+│   ├── skills/unit-converter-tdd/
+│   └── commands/              # /spec · /red · /green · /refactor
+├── AGENTS.md
+├── UnitConverter.py           # 레거시 프로토타입 (meter/feet/yard)
+└── README.md
+```
 
-## 생성형AI를 활용한 Activities (6 시간)
+---
 
-1. 문제 코드 및 기본 요구사항 분석 (0.5시간)
-   - 기본 코드구조, 로직 이해
-2. 기본 요구사항 및 품질 요구사항 구현 (2시간)
-   - OCP를 만족하는 인터페이스 구현 
-   - SRP를 만족하도록 클래스 구현 
-   - 입력값 검증을 위한 구현
-3. TC 구현 (0.5시간)
-   - 단위변환 기능 검증 및 입력 값 검증 TC 작성 
-4. 추가 요구사항 구현 (2시간)
-   - 3개 요구사항 구현 및 TC 작성 
-5. 회고 및 발표 (1시간)
-   - 실습 목표와 달성도
-   - AI를 어떻게 활용했나? 도움이 된 순간과 한계는?
-   - TC를 추가해보면서 개선에 미친 영향, TC 작성 팁
-   - 클린코드와 리팩토링에서 느낀 장점과 어려운점
+## 설치 및 실행
+
+### 가상환경
+
+```bash
+python -m venv venv
+
+# Windows
+venv\Scripts\activate
+
+# macOS / Linux
+source venv/bin/activate
+
+pip install pytest
+```
+
+### 레거시 프로토타입 (UnitConverter.py)
+
+```bash
+python UnitConverter.py
+```
+
+> ECB 기반 CLI(`src/unitconverter/boundary/`)는 GREEN 단계 이후 제공 예정입니다.
+
+### 테스트
+
+```bash
+# D-LEN-01 RED (현재: 의도적 FAIL)
+python -m pytest tests/entity/test_d_len_01.py::test_d_len_01_meter_to_centimeter -v
+
+# Logic Track 전체 (추가 후)
+python -m pytest tests/ -v
+```
+
+---
+
+## TDD 워크플로
+
+```
+/spec  →  /red  →  /green  →  /refactor  →  /red  → ...
+```
+
+| Track | 대상 | 테스트 | Mock |
+|-------|------|--------|------|
+| Logic | entity, control | `test_d_*` | Domain Mock **금지** |
+| UI | boundary | `test_u_*` | stdin/stdout Mock **허용** |
+
+**현재 진행:** STEP 3 — D-LEN-01 RED 완료 (entity · meter→cm) · GREEN 대기
+
+---
+
+## 오류 코드
+
+| 코드 | 이름 |
+|------|------|
+| E001 | InvalidInputFormat |
+| E002 | UnsupportedUnit |
+| E003 | InvalidNumericValue |
+| E004 | EmptyInput |
+| E005 | ConversionNotSupported |
+| E006 | InternalConversionError |
+| E007 | UnknownError |
+
+---
+
+## 참고 문서
+
+| 문서 | 경로 |
+|------|------|
+| PRD | [docs/PRD.md](docs/PRD.md) |
+| Architecture | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) |
+| Agent 역할 | [AGENTS.md](AGENTS.md) |
+| TDD Skill | [.cursor/skills/unit-converter-tdd/SKILL.md](.cursor/skills/unit-converter-tdd/SKILL.md) |
+| Domain 테스트 ID | [.cursor/skills/unit-converter-tdd/reference.md](.cursor/skills/unit-converter-tdd/reference.md) |
+| Spec Report | [reports/01_Report_Spec.md](reports/01_Report_Spec.md) |
+| RED Report | [reports/02_Report_Red.md](reports/02_Report_Red.md) |
+
+---
+
+## 실습 맥락 (생성형 AI 활용, 6시간)
+
+| 단계 | 내용 | 시간 |
+|------|------|------|
+| 1 | 문제 코드·요구사항 분석 | 0.5h |
+| 2 | OCP·SRP 기반 기본 구현 | 2h |
+| 3 | TC 작성 (단위 변환·입력 검증) | 0.5h |
+| 4 | 추가 요구사항 (설정 외부화·동적 등록·출력 포맷) | 2h |
+| 5 | 회고·발표 | 1h |
+
+> 본 저장소는 위 실습을 **ECB + Dual-Track TDD**로 재구성한 UnitConverter_23 버전입니다. 레거시 `UnitConverter.py`는 초기 프로토타입이며, PRD·ARCHITECTURE 기준 구현으로 점진 대체합니다.
