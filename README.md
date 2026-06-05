@@ -41,15 +41,30 @@ mile:0.001553
 
 ---
 
+## 구현 현황
+
+| 카테고리 | Logic (D-*) | UI (U-*) | 비고 |
+|----------|---------------|----------|------|
+| **Length** | D-LEN-01~13 ✅ | U-OUT-01 ✅ | GREEN + REFACTOR R1 완료 |
+| Weight | — | — | 후속 RED |
+| Temperature | — | — | 후속 RED |
+| Area | — | — | 후속 RED |
+| Volume | — | — | 후속 RED |
+| 입력 검증 (E001~E004) | — | — | D-I01 RED 예정 |
+
+**테스트:** `14 passed, 0 failed` (Logic 13 + UI 1)
+
+---
+
 ## 지원 단위
 
-| 카테고리 | 단위 |
-|----------|------|
-| Length | mm, cm, meter, km, inch, feet, yard, mile |
-| Weight | mg, g, kg, oz, lb |
-| Temperature | celsius, fahrenheit, kelvin |
-| Area | sqm, pyeong, acre, hectare |
-| Volume | ml, liter, gallon |
+| 카테고리 | 단위 | 구현 |
+|----------|------|------|
+| Length | mm, cm, meter, km, inch, feet, yard, mile | ✅ |
+| Weight | mg, g, kg, oz, lb | ⏳ |
+| Temperature | celsius, fahrenheit, kelvin | ⏳ |
+| Area | sqm, pyeong, acre, hectare | ⏳ |
+| Volume | ml, liter, gallon | ⏳ |
 
 ---
 
@@ -58,27 +73,31 @@ mile:0.001553
 ```
 UnitConverter_23/
 ├── docs/
-│   ├── PRD.md                 # 제품 요구사항
-│   └── ARCHITECTURE.md        # ECB·SOLID 설계
-├── src/                       # (GREEN 단계에서 구현 예정)
-│   └── unitconverter/
-│       ├── entity/
-│       ├── control/
-│       └── boundary/
+│   ├── PRD.md
+│   └── ARCHITECTURE.md
+├── src/unitconverter/
+│   ├── entity/                # Quantity, Converter, conversion_factors (SSOT)
+│   ├── control/               # ConvertInputUseCase, output_formatter, dto
+│   └── boundary/              # ConvertGateway, OutputPresenter
 ├── tests/
+│   ├── _approval.py           # Golden Master helper
 │   ├── conftest.py
-│   └── entity/
-│       └── test_d_len_01.py   # D-LEN-01 RED
-├── reports/                   # 단계별 보고서
+│   ├── golden/                # U-OUT-01 approved 출력
+│   ├── entity/                # test_d_len_01.py ~ test_d_len_13.py
+│   └── boundary/              # test_u_out_01.py
+├── reports/                   # 01 Spec · 02 RED · 03 GREEN · 04 REFACTOR
 ├── prompts/                   # 세션 Transcript
 ├── .cursor/
-│   ├── rules/                 # 개발 규칙 (SSOT)
+│   ├── rules/
 │   ├── skills/unit-converter-tdd/
 │   └── commands/              # /spec · /red · /green · /refactor
 ├── AGENTS.md
 ├── UnitConverter.py           # 레거시 프로토타입 (meter/feet/yard)
+├── pytest.ini
 └── README.md
 ```
+
+**ECB 의존 방향:** `boundary → control → entity`
 
 ---
 
@@ -98,22 +117,43 @@ source venv/bin/activate
 pip install pytest
 ```
 
+### ECB 기반 변환 (Python)
+
+stdin/stdout CLI(`CliApp`)는 후속 U-* Track에서 제공 예정입니다.  
+현재는 boundary `OutputPresenter`로 동일 출력을 확인할 수 있습니다.
+
+```python
+from unitconverter.boundary.output_presenter import OutputPresenter
+
+print(OutputPresenter().present("meter:2.5"))
+```
+
 ### 레거시 프로토타입 (UnitConverter.py)
 
 ```bash
 python UnitConverter.py
 ```
 
-> ECB 기반 CLI(`src/unitconverter/boundary/`)는 GREEN 단계 이후 제공 예정입니다.
+> meter · feet · yard 3단위만 지원하는 초기 프로토타입입니다. PRD·ARCHITECTURE 기준 `src/` 구현으로 점진 대체 중입니다.
 
 ### 테스트
 
 ```bash
-# D-LEN-01 RED (현재: 의도적 FAIL)
-python -m pytest tests/entity/test_d_len_01.py::test_d_len_01_meter_to_centimeter -v
-
-# Logic Track 전체 (추가 후)
+# 전체 회귀 (Logic 13 + UI 1)
 python -m pytest tests/ -v
+
+# Logic Track — Length entity
+python -m pytest tests/entity/ -v
+
+# UI Track — Golden Master
+python -m pytest tests/boundary/test_u_out_01.py -v
+```
+
+Golden 파일 갱신 (의도적 변경 시에만):
+
+```powershell
+# Windows PowerShell
+$env:UPDATE_GOLDEN="1"; python -m pytest tests/boundary/test_u_out_01.py -v
 ```
 
 ---
@@ -129,21 +169,27 @@ python -m pytest tests/ -v
 | Logic | entity, control | `test_d_*` | Domain Mock **금지** |
 | UI | boundary | `test_u_*` | stdin/stdout Mock **허용** |
 
-**현재 진행:** STEP 3 — D-LEN-01 RED 완료 (entity · meter→cm) · GREEN 대기
+| 단계 | 상태 | 산출 |
+|------|------|------|
+| STEP 1 Spec | ✅ | PRD · ARCHITECTURE · D-* ID |
+| STEP 2 RED | ✅ | D-LEN-01~13 스켈레톤 |
+| STEP 3 GREEN | ✅ | entity · control · boundary · U-OUT-01 Golden |
+| STEP 4 REFACTOR | ✅ | R1 — `convert_ordered()` extract |
+| STEP 5+ | ⏳ | D-I01 RED (입력 검증) · 추가 카테고리 |
 
 ---
 
 ## 오류 코드
 
-| 코드 | 이름 |
-|------|------|
-| E001 | InvalidInputFormat |
-| E002 | UnsupportedUnit |
-| E003 | InvalidNumericValue |
-| E004 | EmptyInput |
-| E005 | ConversionNotSupported |
-| E006 | InternalConversionError |
-| E007 | UnknownError |
+| 코드 | 이름 | 상태 |
+|------|------|------|
+| E001 | InvalidInputFormat | ⏳ D-I RED 후속 |
+| E002 | UnsupportedUnit | ⏳ |
+| E003 | InvalidNumericValue | ⏳ |
+| E004 | EmptyInput | ⏳ |
+| E005 | ConversionNotSupported | ⏳ |
+| E006 | InternalConversionError | ⏳ |
+| E007 | UnknownError | ⏳ |
 
 ---
 
@@ -158,6 +204,8 @@ python -m pytest tests/ -v
 | Domain 테스트 ID | [.cursor/skills/unit-converter-tdd/reference.md](.cursor/skills/unit-converter-tdd/reference.md) |
 | Spec Report | [reports/01_Report_Spec.md](reports/01_Report_Spec.md) |
 | RED Report | [reports/02_Report_Red.md](reports/02_Report_Red.md) |
+| GREEN Report | [reports/03_Report_Green.md](reports/03_Report_Green.md) |
+| REFACTOR Report | [reports/04_Report_Refactoring.md](reports/04_Report_Refactoring.md) |
 
 ---
 
