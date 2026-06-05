@@ -1,0 +1,18 @@
+---
+description: UnitConverter_23 pytest·테스트 ID·파일명 규칙
+globs: tests/**/*.py
+alwaysApply: false
+---
+
+# UnitConverter — 테스트
+
+* 테스트 ID 규칙
+
+  * D-* : Domain/Logic
+  * U-* : UI/Boundary
+* 파일명 규칙
+
+  * test_d_*
+  * test_u_*
+* pytest 사용
+* Given-When-Then 패턴 권장

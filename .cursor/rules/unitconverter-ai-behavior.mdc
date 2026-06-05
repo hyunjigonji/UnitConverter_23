@@ -1,0 +1,13 @@
+---
+description: UnitConverter_23 Agent 응답·작업 규칙
+alwaysApply: true
+---
+
+# UnitConverter — AI 행동
+
+* 모든 응답은 한국어 사용
+* 요구사항이 불명확하면 구현 전에 질문
+* 기존 테스트를 깨뜨리는 변경 금지
+* 리팩터링 시 동작 변경 금지
+* git commit은 사용자 요청 시만 수행
+* 새로운 단위 추가 시 확장 가능한 구조 우선

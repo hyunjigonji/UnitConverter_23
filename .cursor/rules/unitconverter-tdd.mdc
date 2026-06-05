@@ -1,0 +1,21 @@
+---
+description: UnitConverter_23 TDD RED·GREEN·REFACTOR 절차
+alwaysApply: true
+---
+
+# UnitConverter — TDD
+
+* RED → GREEN → REFACTOR 순서 엄수
+* assert 제거 금지
+* assert 완화 금지
+* skip 금지
+* xfail 금지
+* 실패 테스트를 먼저 작성
+
+TDD 작업 시 아래 형식 선언:
+
+```
+Phase: RED|GREEN|REFACTOR
+Layer: boundary|control|entity
+Track: Logic|UI
+```

@@ -1,0 +1,12 @@
+---
+description: UnitConverter_23 변환 계수·Base Unit·단위 문자열 SSOT
+globs: src/**/*.py
+alwaysApply: false
+---
+
+# UnitConverter — SSOT
+
+* 단위 변환 계수는 단일 소스에서 관리
+* 변환 계수 하드코딩 중복 금지
+* Base Unit 정의 중복 금지
+* 단위 문자열 상수 중복 금지
