@@ -1,10 +1,10 @@
 import pytest
 
 
-def test_d_len_01_meter_to_centimeter(sample_meter_input):
-    # Given: meter:1 입력
-    # When: convert(sample_meter_input) 호출
+def test_d_len_01_meter_to_centimeter():
+    # Given: Quantity("meter", 1.0)
+    # When: Converter.convert() 호출
     # Then: cm:100 포함
     pytest.fail(
-        "RED: D-LEN-01 — meter→centimeter 변환 미구현, 의도적 실패"
+        "RED: D-LEN-01 — 구현 없음, 의도적 실패"
     )
