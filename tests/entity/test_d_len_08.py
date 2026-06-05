@@ -1,10 +1,14 @@
-import pytest
+from unitconverter.entity.converter import Converter
+from unitconverter.entity.models import Quantity
 
 
 def test_d_len_08_meter_to_yard():
-    # Given: Quantity("meter", 2.5)
-    # When: Converter.convert() 호출
-    # Then: yard:2.734 포함
-    pytest.fail(
-        "RED: D-LEN-08 — 구현 없음, 의도적 실패"
-    )
+    # Given
+    quantity = Quantity("meter", 2.5)
+    converter = Converter()
+
+    # When
+    result = converter.convert(quantity)
+
+    # Then
+    assert result["yard"] == 2.734

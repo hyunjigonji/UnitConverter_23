@@ -1,10 +1,17 @@
-import pytest
+from unitconverter.entity.converter import Converter
+from unitconverter.entity.models import Quantity
+
+LENGTH_UNITS = {"mm", "cm", "meter", "km", "inch", "feet", "yard", "mile"}
 
 
 def test_d_len_10_all_length_units_from_meter():
-    # Given: Quantity("meter", 2.5)
-    # When: Converter.convert() 호출
-    # Then: 변환 줄 수 = 8, 단위 집합 = {mm, cm, meter, km, inch, feet, yard, mile}
-    pytest.fail(
-        "RED: D-LEN-10 — 구현 없음, 의도적 실패"
-    )
+    # Given
+    quantity = Quantity("meter", 2.5)
+    converter = Converter()
+
+    # When
+    result = converter.convert(quantity)
+
+    # Then
+    assert len(result) == 8
+    assert set(result.keys()) == LENGTH_UNITS
