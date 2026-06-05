@@ -1,0 +1,20 @@
+---
+description: UnitConverter_23 ECB 아키텍처·Dual-Track Mock 규칙
+alwaysApply: true
+---
+
+# UnitConverter — 아키텍처
+
+## ECB
+
+* ECB 적용
+* boundary → control → entity
+* entity → control import 금지
+* entity → boundary import 금지
+* entity는 외부 라이브러리 의존 금지
+
+## Dual-Track
+
+* Logic(entity/control) Domain Mock 금지
+* UI(boundary) Mock 허용
+* 비즈니스 규칙은 실제 객체 기반 테스트 수행

@@ -1,0 +1,36 @@
+---
+description: UnitConverter_23 도메인·지원 단위·오류 코드 E001~E007
+alwaysApply: true
+---
+
+# UnitConverter — 도메인·오류
+
+## 도메인
+
+* 단위 변환 CLI 프로그램
+* 입력 형식: `<unit>:<value>`
+* 예시: `meter:2.5`
+* 출력 형식:
+
+  * `cm:250`
+  * `feet:8.2021`
+  * `inch:98.4252`
+* 지원 단위:
+
+  * Length: mm, cm, meter, km, inch, feet, yard, mile
+  * Weight: mg, g, kg, oz, lb
+  * Temperature: celsius, fahrenheit, kelvin
+  * Area: sqm, pyeong, acre, hectare
+  * Volume: ml, liter, gallon
+* 기준 단위(Base Unit)를 통해 변환 수행
+* 모든 변환은 결정적(deterministic)이어야 함
+
+## 오류
+
+* E001 InvalidInputFormat
+* E002 UnsupportedUnit
+* E003 InvalidNumericValue
+* E004 EmptyInput
+* E005 ConversionNotSupported
+* E006 InternalConversionError
+* E007 UnknownError
